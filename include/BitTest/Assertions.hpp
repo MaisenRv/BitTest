@@ -11,7 +11,7 @@
 #define BIT_ASSERT(condition) BitTest::engine::evaluateAssert(#condition,condition,__FILE__,__LINE__)
 
 namespace BitTest::engine{
-    void evaluateAssert(const char *expr, bool conditionResult, const char *fileName, int line){
+    inline void evaluateAssert(const char *expr, bool conditionResult, const char *fileName, int line){
         if(conditionResult){
             types::getSessionState().addPassed();
             std::cout << GREEN << "\t[TEST PASSED]" << RESET << std::endl;
