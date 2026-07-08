@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <BitTest/types/SessionState.hpp>
 
 #define RESET   "\033[0m"
@@ -8,20 +10,57 @@
 #define YELLOW  "\033[33m"
 #define BLUE    "\033[34m"
 
+
+#define BIT_FAIL(expr) BitTest::engine::fail(true,#expr,__FILE__,__LINE__)
+#define BIT_PASS() BitTest::engine::pass()
+
 #define BIT_ASSERT(condition) BitTest::engine::evaluateAssert(#condition,condition,__FILE__,__LINE__)
+#define BIT_ASSERT_EQ(expected, actual) BitTest::engine::evaluateAssertEquals<decltype(expected)>(expected,actual,#expected,#actual,__FILE__,__LINE__)
+
+#define BIT_EXPECT(condition) BitTest::engine::evaluateExpect(#condition,condition,__FILE__,__LINE__)
+#define BIT_EXPECT_EQ(expected, actual) BitTest::engine::evaluateExpectEquals<decltype(expected)>(expected,actual,#expected,#actual,__FILE__,__LINE__)
 
 namespace BitTest::engine{
-    inline void evaluateAssert(const char *expr, bool conditionResult, const char *fileName, int line){
-        if(conditionResult){
-            types::getSessionState().addPassed();
-            std::cout << GREEN << "\t[TEST PASSED]" << RESET << std::endl;
-            return;
-        }
+    inline void fail(bool isFatal, const char *expr,const char *fileName, int line){
         types::getSessionState().addFailed();
-        std::cout << RED << "\t[TEST FAILED]" <<
+        std::cout << (isFatal ? RED : YELLOW) << "\t[TEST FAILED]" <<
             "\n\t[FILE]: " << fileName << 
             "\n\t[LINE]: " << line << 
             "\n\t[EXPRESION]:" << 
             "\n\t\t" << expr << RESET << std::endl;
+        if (isFatal) throw std::runtime_error("");
+    }
+    inline void pass(){
+        types::getSessionState().addPassed();
+        std::cout << GREEN << "\t[TEST PASSED]" << RESET << std::endl;
+    }
+
+    inline void evaluateAssert(const char *expr, bool conditionResult, const char *fileName, int line){
+        if(conditionResult){
+            BitTest::engine::pass();
+            return;
+        }
+        BitTest::engine::fail(true,expr,fileName,line);
+    }
+    template <typename T>
+    inline void evaluateAssertEquals(T expected, T actual, const char* strExpected, const char* strActual, const char *fileName, int line){
+        std::stringstream ss;
+        ss << strExpected << " == " << strActual << "| Expected " << expected << ", it was obtained " << actual;
+        BitTest::engine::evaluateAssert(ss.str().c_str(), expected == actual, fileName, line );
+    }
+    
+    inline void evaluateExpect(const char *expr, bool conditionResult, const char *fileName, int line){
+        if(conditionResult){
+            BitTest::engine::pass();
+            return;
+        }
+        BitTest::engine::fail(false,expr,fileName,line);
+    }
+
+    template <typename T>
+    inline void evaluateExpectEquals(T expected, T actual, const char* strExpected, const char* strActual, const char *fileName, int line){
+        std::stringstream ss;
+        ss << strExpected << " == " << strActual << "| Expected " << expected << ", it was obtained " << actual;
+        BitTest::engine::evaluateExpect(ss.str().c_str(), expected == actual, fileName, line );
     }
 }
