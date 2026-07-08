@@ -15,10 +15,10 @@
 #define BIT_PASS() BitTest::engine::pass()
 
 #define BIT_ASSERT(condition) BitTest::engine::evaluateAssert(#condition,condition,__FILE__,__LINE__)
-#define BIT_ASSERT_EQ(expected, actual) BitTest::engine::evaluateAssertEquals<decltype(expected)>(expected,actual,#expected,#actual,__FILE__,__LINE__)
+#define BIT_ASSERT_EQ(expected, actual) BitTest::engine::evaluateAssertEquals<decltype(expected),decltype(actual)>(expected,actual,#expected,#actual,__FILE__,__LINE__)
 
 #define BIT_EXPECT(condition) BitTest::engine::evaluateExpect(#condition,condition,__FILE__,__LINE__)
-#define BIT_EXPECT_EQ(expected, actual) BitTest::engine::evaluateExpectEquals<decltype(expected)>(expected,actual,#expected,#actual,__FILE__,__LINE__)
+#define BIT_EXPECT_EQ(expected, actual) BitTest::engine::evaluateExpectEquals<decltype(expected),decltype(actual)>(expected,actual,#expected,#actual,__FILE__,__LINE__)
 
 namespace BitTest::engine{
     inline void fail(bool isFatal, const char *expr,const char *fileName, int line){
@@ -42,8 +42,8 @@ namespace BitTest::engine{
         }
         BitTest::engine::fail(true,expr,fileName,line);
     }
-    template <typename T>
-    inline void evaluateAssertEquals(T expected, T actual, const char* strExpected, const char* strActual, const char *fileName, int line){
+    template <typename T1, typename T2>
+    inline void evaluateAssertEquals(T1 expected, T2 actual, const char* strExpected, const char* strActual, const char *fileName, int line){
         std::stringstream ss;
         ss << strExpected << " == " << strActual << "| Expected " << expected << ", it was obtained " << actual;
         BitTest::engine::evaluateAssert(ss.str().c_str(), expected == actual, fileName, line );
@@ -57,8 +57,8 @@ namespace BitTest::engine{
         BitTest::engine::fail(false,expr,fileName,line);
     }
 
-    template <typename T>
-    inline void evaluateExpectEquals(T expected, T actual, const char* strExpected, const char* strActual, const char *fileName, int line){
+    template <typename T1, typename T2>
+    inline void evaluateExpectEquals(T1 expected, T2 actual, const char* strExpected, const char* strActual, const char *fileName, int line){
         std::stringstream ss;
         ss << strExpected << " == " << strActual << "| Expected " << expected << ", it was obtained " << actual;
         BitTest::engine::evaluateExpect(ss.str().c_str(), expected == actual, fileName, line );
