@@ -6,7 +6,7 @@
 namespace BitTest{
     inline void runAllTests(){
         for (auto& test: TestRegistry::getTests()){
-            std::cout << BLUE << "[TEST NAME]: " << test.name << RESET << " ";
+            std::cout << BLUE << "[TEST NAME]: " << test.name << RESET << std::endl;
             test.funct();
         }
         std::cout << GREEN <<"\n Test passed: " << types::getSessionState().getPassed() << RESET << std::endl;
