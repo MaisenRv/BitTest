@@ -21,7 +21,7 @@
 #define BIT_ASSERT_FALSE(cond) BitTest::engine::evaluateBoolean(false, cond, true, #cond, __FILE__, __LINE__)
 #define BIT_ASSERT_THROWS(expression) \
     try { \
-        expression; \
+        static_cast<void>(expression); \
         BitTest::engine::fail(true, #expression, __FILE__, __LINE__); \
     } catch (...) { BitTest::engine::pass(); }
 
@@ -32,7 +32,7 @@
 #define BIT_EXPECT_FALSE(cond) BitTest::engine::evaluateBoolean(false, cond, false, #cond, __FILE__, __LINE__)
 #define BIT_EXPECT_THROWS(expression) \
     try { \
-        expression; \
+        static_cast<void>(expression); \
         BitTest::engine::fail(false, #expression, __FILE__, __LINE__); \
     } catch (...) { BitTest::engine::pass(); }
 
