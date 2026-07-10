@@ -16,9 +16,19 @@
 
 #define BIT_ASSERT(condition) BitTest::engine::evaluateAssert(#condition,condition,__FILE__,__LINE__)
 #define BIT_ASSERT_EQ(expected, actual) BitTest::engine::evaluateAssertEquals<decltype(expected),decltype(actual)>(expected,actual,#expected,#actual,__FILE__,__LINE__)
+#define BIT_ASSERT_THROWS(expression) \
+    try { \
+        expression; \
+        BitTest::engine::fail(true, #expression, __FILE__, __LINE__); \
+    } catch (...) { BitTest::engine::pass(); }
 
 #define BIT_EXPECT(condition) BitTest::engine::evaluateExpect(#condition,condition,__FILE__,__LINE__)
 #define BIT_EXPECT_EQ(expected, actual) BitTest::engine::evaluateExpectEquals<decltype(expected),decltype(actual)>(expected,actual,#expected,#actual,__FILE__,__LINE__)
+#define BIT_EXPECT_THROWS(expression) \
+    try { \
+        expression; \
+        BitTest::engine::fail(false, #expression, __FILE__, __LINE__); \
+    } catch (...) { BitTest::engine::pass(); }
 
 namespace BitTest::engine{
     inline void fail(bool isFatal, const char *expr,const char *fileName, int line){
